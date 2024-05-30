@@ -2,39 +2,68 @@ const express = require('express');
 const { Pool } = require('pg');
 const bodyParser = require('body-parser');
 require('dotenv').config();
-const axios = require('axios');
-
+const jwt = require('jsonwebtoken');
 
 const app = express();
-const PORT3 = process.env.PORT3;
+const PORT = process.env.PORT3 || 3000; // Valor por defecto para el puerto
+const JWT_SECRET = process.env.JWT_SECRET;
+const TOKEN = process.env.TOKEN;
+
 app.use(bodyParser.json());
 
 const pool = new Pool({
   connectionString: process.env.DATABASE_URL,
   ssl: {
-    rejectUnauthorized: false
-  }
+    rejectUnauthorized: false,
+  },
 });
 
-app.post('/tempinsert', async (req, res) => {
+// Verificar el token JWT
+const verifyToken = (req, res, next) => {
+  const token = TOKEN;
+
+  if (!token) {
+    return res.status(401).json({ error: 'Token no proporcionado' });
+  }
+
+  jwt.verify(token, JWT_SECRET, (err, decoded) => {
+    if (err) {
+      return res.status(401).json({ error: 'Token inválido' });
+    }
+    req.user = decoded;
+    next();
+  });
+};
+
+// Generar Token
+const generateToken = (user) => {
+  return jwt.sign(user, JWT_SECRET);
+};
+
+// Endpoint para insertar temperatura
+app.post('/tempinsert', verifyToken, async (req, res) => {
   const temp = req.body.temperatura;
-  const createdAt = new Date(); // Genera la fecha actual
-  console.log(temp);
+  //const createdAt = Math.floor(new Date().getTime() / 1000.0);
+
+  const createdAt = Math.floor(new Date().getTime() / 1000); // Obtiene la fecha actual en segundos
+
+  console.log(createdAt);
+  // Genera la fecha actual como objeto Date
+  console.log(temp, createdAt);
 
   try {
     const client = await pool.connect();
     await client.query('INSERT INTO temperaturas (timetemp, temperatura) VALUES ($1, $2)', [createdAt, temp]);
     client.release();
-    res.status(200).json({ message: "temperatura almacenada con éxito" });
+    res.status(200).json({ message: 'Temperatura almacenada con éxito' });
   } catch (err) {
     console.error('Error al almacenar la temperatura', err);
     res.status(500).json({ error: 'Error de servidor' });
   }
 });
 
-
-
-app.get('/tempget', async (req, res) => {
+// Endpoint para obtener temperaturas
+app.get('/tempget', verifyToken, async (req, res) => {
   try {
     const client = await pool.connect();
     const result = await client.query('SELECT * FROM temperaturas ORDER BY timetemp DESC');
@@ -46,54 +75,19 @@ app.get('/tempget', async (req, res) => {
   }
 });
 
-
-
-// Verificar el token JWT
-const verifyToken = (req, res, next) => {
-  const authHeader = req.headers.authorization;
-
-  if (!authHeader || !authHeader.startsWith('Bearer ')) {
-    return res.status(401).json({ error: 'Token no proporcionado' });
-  }
-
-  const token = authHeader.split(' ')[1];
-
-  jwt.verify(token, JWT_SECRET, (err, decoded) => {
-    if (err) {
-      return res.status(401).json({ error: 'Token inválido' });
-    }
-    req.user = decoded;
-    next();
-  });
-};
-
-
-
-
-//Genera Token
-const generateToken = (user) => {
-  return jwt.sign(user, JWT_SECRET, { expiresIn: '1h' });
-};
-
+// Endpoint de login
 app.post('/login', (req, res) => {
   const { username, password } = req.body;
-  //Lógica de user y pass
+
+  // Lógica de user y pass
   if (username === 'raul' && password === '1234') {
     const token = generateToken({ username });
-    res.json({ token }); //Devuelve token con 1h. de validez
+    res.json({ token });
   } else {
     res.status(401).json({ error: 'Credenciales incorrectas' });
   }
 });
 
-
-
-
-
-
-
-
-
-app.listen(PORT3, () => {
-  console.log(`Servidor corriendo en http://localhost:${PORT3}`);
+app.listen(PORT, () => {
+  console.log(`Servidor corriendo en http://localhost:${PORT}`);
 });
