@@ -1,0 +1,13 @@
+body {
+    font-family: Arial, sans-serif;
+}
+#temperature-list {
+    list-style-type: none;
+    padding: 0;
+}
+#temperature-list li {
+    padding: 8px;
+    margin-bottom: 4px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+}

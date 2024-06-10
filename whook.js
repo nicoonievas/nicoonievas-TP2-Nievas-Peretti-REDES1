@@ -21,6 +21,7 @@ app.post('/verifytemp', async (req, res) => {
   }
 });
 
+
 app.listen(PORT2, () => {
   console.log(`Servidor corriendo en http://localhost:${PORT2}`);
 });

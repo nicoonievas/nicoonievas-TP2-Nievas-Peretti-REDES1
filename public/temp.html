@@ -1,39 +1,20 @@
 <!DOCTYPE html>
-<html lang="en">
-
+<html lang="es">
 <head>
     <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Iniciar Sesion</title>
-    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
-        
-
+    <title>Cliente WebSocket</title>
+    <link rel="stylesheet" href="style.css">
 </head>
-
 <body>
-    <div class="container mt-5">
-        <div class="row justify-content-center">
-            <div class="col-md-6">
-                <div class="card">
-                    <div class="card-header">
-                        <h4>Registrar Temperatura</h4>
-                    </div>
-                    <div class="card-body">
-                        <form>
-                            <div class="mb-3 col-md-4">
-                                <label for="temp" class="form-label">Temperatura</label>
-                                <input type="text" class="form-control" id="temperatura">
-                            <button type="button" id="send" class="btn btn-primary" onclick="sendtemperature()">Enviar</button>
-                        </form>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
+    <h1>Cliente WebSocket</h1>
+    <ul id="temperature-list"></ul>
+
+
+
+
+
+    
     <script src="temp.js"></script>
-
-
 </body>
-
 </html>

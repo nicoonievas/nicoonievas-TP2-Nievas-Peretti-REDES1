@@ -62,6 +62,7 @@ app.post('/tempinsert', verifyToken, async (req, res) => {
   }
 });
 
+
 // Endpoint para obtener temperaturas
 app.get('/tempget', verifyToken, async (req, res) => {
   try {
