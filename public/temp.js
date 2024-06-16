@@ -1,41 +1,35 @@
-document.addEventListener("DOMContentLoaded", () => {
-    const ws = new WebSocket('ws://localhost:3000');
-    const temperatureList = document.getElementById('temperature-list');
 
-    ws.onopen = () => {
-        console.log('Conectado al servidor');
-        random5Segundos(); // Volvemos a llamar a la función para generar temperaturas automáticamente
-    };
+const temperatureList = document.getElementById('temperature-list');
+// Conexión WebSocket
+const ws = new WebSocket('ws://localhost:3000');
 
-    ws.onclose = () => {
-        console.log('Desconectado del servidor');
-    };
+ws.onopen = () => {
+    console.log('Conectado al servidor');
+};
 
-    ws.onerror = (error) => {
-        console.error('WebSocket error:', error);
-    };
+ws.onmessage = (message) => {
+    console.log(`Mensaje recibido del servidor: ${message.data}`);
+    const li = document.createElement('li');
+    li.textContent = `Temperatura Recibida del Servidor: ${message.data}`;
+    temperatureList.appendChild(li);
+};
 
-    ws.onmessage = (event) => {
-        const data = JSON.parse(event.data);
-        const listItem = document.createElement('li');
-        listItem.textContent = `User ${data.userId}: ${data.message}°C`;
-        temperatureList.appendChild(listItem); // Añadimos el nuevo elemento <li> a la lista <ul>
-    };
-    
+ws.onerror = (error) => {
+    console.error('Error WebSocket:', error);
+};
 
-    function random5Segundos() {
-        setInterval(() => {
-            const random = parseFloat((Math.random() * (24 - 20) + 20).toFixed(1));
-            console.log(random);
-            sendMessage(random);
-        }, 5000);
-    }
+ws.onclose = () => {
+    console.log('Desconectado del servidor');
+};
 
-    function sendMessage(message) {
-        if (ws.readyState === WebSocket.OPEN) {
-            ws.send(message.toString());
-        } else {
-            console.log('El WebSocket no está abierto. No se puede enviar el mensaje.');
-        }
-    }
-});
+function generateRandomTemperature() {
+    // Iniciar el intervalo para generar temperaturas aleatorias
+    setInterval(() => {
+        const random = parseFloat((Math.random() * (24 - 20) + 20).toFixed(1));
+        ws.send(random.toString());
+        console.log(`Enviando temperatura al servidor: ${random}`);
+        const li = document.createElement('li');
+        li.textContent = `Temperatura Enviada: ${random}`;
+        temperatureList.appendChild(li);
+    }, 5000);
+}

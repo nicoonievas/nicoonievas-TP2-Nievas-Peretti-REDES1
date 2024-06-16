@@ -10,10 +10,11 @@ app.use(bodyParser.json());
 
 app.post('/verifytemp', async (req, res) => {
   //const tempchecked = req.body;
-  console.log(req.body);
+  console.log(req.body.temperatura);
   try {
     await axios.post('http://localhost:5003/tempinsert', req.body);
-    // res.status(200).json({ message: "Temperatura enviada con éxito" });
+    res.status(200).json({ message: 'Temperatura almacenada con éxito' });
+
     
   } catch (err) {
     console.error('Error en el envío de la temperatura', err);

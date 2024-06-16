@@ -43,11 +43,10 @@ const generateToken = (user) => {
 // Endpoint para insertar temperatura
 app.post('/tempinsert', verifyToken, async (req, res) => {
   const temp = req.body.temperatura;
-  //const createdAt = Math.floor(new Date().getTime() / 1000.0);
+
 
   const createdAt = Math.floor(new Date().getTime() / 1000); // Obtiene la fecha actual en segundos
 
-  console.log(createdAt);
   // Genera la fecha actual como objeto Date
   console.log(temp, createdAt);
 

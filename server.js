@@ -15,41 +15,37 @@ app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, 'public', 'temp.html'));
 });
 
-let userIdCounter = 0;
-const users = {};
+const clients = new Map();
+let nextClientId = 1;
 
 wss.on('connection', (ws) => {
-    const userId = userIdCounter++;
-    users[userId] = ws;
+    console.log('Cliente WebSocket conectado.');
 
-    ws.send(JSON.stringify({ message: 'Bienvenido', userId }));
-
-    console.log(`Cliente conectado con ID: ${userId}`);
+    const clientId = nextClientId++; // Asignar un ID único al cliente
+    clients.set(clientId, ws); // Agregar la conexión al mapa
 
     ws.on('message', async (message) => {
-        const temperature = Buffer.isBuffer(message) ? message.toString() : message;
-        console.log(`Mensaje recibido de ${userId}: ${temperature}`);
-        
+        var temperature = parseFloat(message);
+        console.log(`Mensaje recibido de ${clientId}: ${temperature}`);
+
         try {
-            const response = await axios.post('http://localhost:5002/verifytemp', { temperatura: parseFloat(temperature) });
-            
-            if (response.status === 200) {
-                console.log("La temperatura se envió con éxito", temperature);
-            } else {
-                console.error('Error al verificar la temperatura');
-            }
+            const response = await axios.post('http://localhost:5002/verifytemp', { temperatura: temperature });
+            console.log('Respuesta del servidor:', response.data);
         } catch (error) {
             console.error('Error interno del servidor:', error);
         }
-
-        Object.keys(users).forEach(id => {
-            users[id].send(JSON.stringify({ userId, message: temperature }));
+        clients.forEach((client) => {
+            if (WebSocket.OPEN) {
+                console.log(`Enviando a Cliente ${temperature}`);
+                client.send(`Cliente dice: ${temperature}`);
+            }
         });
     });
+    // Enviar el mensaje a todos los usuarios conectados
 
     ws.on('close', () => {
-        console.log(`Cliente ${userId} desconectado`);
-        delete users[userId];
+        console.log(`Cliente ${clientId} desconectado`);
+        clients.delete(clientId);
     });
 });
 

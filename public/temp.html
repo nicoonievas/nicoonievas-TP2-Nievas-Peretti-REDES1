@@ -3,18 +3,34 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cliente WebSocket</title>
-    <link rel="stylesheet" href="style.css">
+    <title>Temperaturas</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+        }
+        h1 {
+            text-align: center;
+        }
+        ul {
+            list-style-type: none;
+            padding: 0;
+        }
+        li {
+            margin-bottom: 10px;
+            padding: 10px;
+            border: 1px solid #ccc;
+            background-color: #f9f9f9;
+        }
+    </style>
 </head>
 <body>
-    <h1>Cliente WebSocket</h1>
+    
+    <h1>Temperaturas generadas</h1>
+    <button onclick="generateRandomTemperature()">Generar temperaturas</button>
     <ul id="temperature-list"></ul>
 
-
-
-
-
-    
+    <!-- Incluir el archivo JavaScript -->
     <script src="temp.js"></script>
 </body>
 </html>
