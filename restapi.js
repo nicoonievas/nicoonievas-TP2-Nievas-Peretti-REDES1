@@ -3,6 +3,7 @@ const { Pool } = require('pg');
 const bodyParser = require('body-parser');
 require('dotenv').config();
 const jwt = require('jsonwebtoken');
+const cors = require('cors'); // Importar el paquete CORS
 
 const app = express();
 const PORT = process.env.PORT3 || 3000; // Valor por defecto para el puerto
@@ -10,6 +11,7 @@ const JWT_SECRET = process.env.JWT_SECRET;
 const TOKEN = process.env.TOKEN;
 
 app.use(bodyParser.json());
+app.use(cors()); // Habilitar CORS para todas las solicitudes
 
 const pool = new Pool({
   connectionString: process.env.DATABASE_URL,
@@ -43,12 +45,7 @@ const generateToken = (user) => {
 // Endpoint para insertar temperatura
 app.post('/tempinsert', verifyToken, async (req, res) => {
   const temp = req.body.temperatura;
-
-
   const createdAt = Math.floor(new Date().getTime() / 1000); // Obtiene la fecha actual en segundos
-
-  // Genera la fecha actual como objeto Date
-  console.log(temp, createdAt);
 
   try {
     const client = await pool.connect();
@@ -61,8 +58,7 @@ app.post('/tempinsert', verifyToken, async (req, res) => {
   }
 });
 
-
-// Endpoint para obtener temperaturas
+// Endpoint para obtener todas las temperaturas
 app.get('/tempget', verifyToken, async (req, res) => {
   try {
     const client = await pool.connect();
@@ -75,16 +71,17 @@ app.get('/tempget', verifyToken, async (req, res) => {
   }
 });
 
+// Endpoint para obtener temperaturas filtradas por fecha
 app.get('/tempget_date', verifyToken, async (req, res) => {
   try {
     const { fecha } = req.query; // Obtiene la fecha del query string
 
     const client = await pool.connect();
-    
+
     // Consulta SQL modificada para filtrar por fecha
     const query = 'SELECT * FROM temperaturas WHERE DATE_TRUNC(\'day\', to_timestamp(timetemp)) = $1 ORDER BY timetemp DESC';
     const result = await client.query(query, [fecha]);
-    
+
     client.release();
     res.json(result.rows);
   } catch (err) {
@@ -93,13 +90,11 @@ app.get('/tempget_date', verifyToken, async (req, res) => {
   }
 });
 
-
-
 // Endpoint de login
 app.post('/login', (req, res) => {
   const { username, password } = req.body;
 
-  // Lógica de user y pass
+  // Lógica de usuario y contraseña
   if (username === 'raul' && password === '1234') {
     const token = generateToken({ username });
     res.json({ token });
