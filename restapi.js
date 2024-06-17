@@ -75,6 +75,26 @@ app.get('/tempget', verifyToken, async (req, res) => {
   }
 });
 
+app.get('/tempget_date', verifyToken, async (req, res) => {
+  try {
+    const { fecha } = req.query; // Obtiene la fecha del query string
+
+    const client = await pool.connect();
+    
+    // Consulta SQL modificada para filtrar por fecha
+    const query = 'SELECT * FROM temperaturas WHERE DATE_TRUNC(\'day\', to_timestamp(timetemp)) = $1 ORDER BY timetemp DESC';
+    const result = await client.query(query, [fecha]);
+    
+    client.release();
+    res.json(result.rows);
+  } catch (err) {
+    console.error('Error al obtener las temperaturas', err);
+    res.status(500).json({ error: 'Error al obtener los registros' });
+  }
+});
+
+
+
 // Endpoint de login
 app.post('/login', (req, res) => {
   const { username, password } = req.body;

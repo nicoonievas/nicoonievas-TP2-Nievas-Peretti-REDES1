@@ -1,13 +1,26 @@
-body {
+/* styles.css */
+
+body, html {
+    height: 100%;
+    margin: 0;
     font-family: Arial, sans-serif;
 }
-#temperature-list {
-    list-style-type: none;
-    padding: 0;
+
+.container {
+    display: flex;
+    height: 100%;
 }
-#temperature-list li {
-    padding: 8px;
-    margin-bottom: 4px;
-    border: 1px solid #ddd;
-    border-radius: 4px;
+
+.chart-container {
+    flex: 0 0 70%; /* Ocupa el 70% del contenedor flex */
+    padding: 20px;
+    box-sizing: border-box;
+}
+
+.temperature-list-container {
+    flex: 1; /* Ocupa el espacio restante */
+    padding: 20px;
+    box-sizing: border-box;
+    overflow-y: auto; /* Habilita scroll si es necesario */
+    max-height: 100%; /* Asegura que no se exceda el alto del contenedor principal */
 }
