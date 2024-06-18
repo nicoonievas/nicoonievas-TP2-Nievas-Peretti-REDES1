@@ -51,6 +51,7 @@ app.post('/tempinsert', verifyToken, async (req, res) => {
     const client = await pool.connect();
     await client.query('INSERT INTO temperaturas (timetemp, temperatura) VALUES ($1, $2)', [createdAt, temp]);
     client.release();
+    console.log(temp);
     res.status(200).json({ message: 'Temperatura almacenada con éxito' });
   } catch (err) {
     console.error('Error al almacenar la temperatura', err);

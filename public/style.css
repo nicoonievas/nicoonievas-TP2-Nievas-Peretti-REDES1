@@ -1,9 +1,9 @@
-/* styles.css */
-
 body, html {
     height: 100%;
     margin: 0;
     font-family: Arial, sans-serif;
+    color: black; /* Color de las letras en negro */
+    background-color: rgba(255, 255, 255, 0.8); /* Color de fondo semi-transparente para resaltar el texto */
 }
 
 .container {
@@ -12,15 +12,31 @@ body, html {
 }
 
 .chart-container {
-    flex: 0 0 70%; /* Ocupa el 70% del contenedor flex */
+    flex: 0 0 70%;
     padding: 20px;
     box-sizing: border-box;
+    color: black; /* Color de las letras en negro */
 }
 
 .temperature-list-container {
-    flex: 1; /* Ocupa el espacio restante */
+    flex: 1;
     padding: 20px;
     box-sizing: border-box;
-    overflow-y: auto; /* Habilita scroll si es necesario */
-    max-height: 100%; /* Asegura que no se exceda el alto del contenedor principal */
+    overflow-y: auto;
+    max-height: 100%;
+    color: black; /* Color de las letras en negro */
+}
+
+.background-image {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: -1; /* Asegura que esté detrás de los demás contenidos */
+    background-image: url('Hydroponic_Climate_Control_Greenhouse_Indoor.jpg.webp');
+    background-size: cover; /* Para cubrir todo el fondo */
+    background-position: center; /* Centra la imagen */
+    background-repeat: no-repeat; /* Evita que la imagen se repita */
+    opacity: 0.9; /* Ajusta la opacidad de la imagen de fondo */
 }
